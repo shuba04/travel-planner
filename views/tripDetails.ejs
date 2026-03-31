@@ -1,0 +1,277 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="/css/style.css">
+<h1><%= trip.destination %></h1>
+
+<div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+
+<hr>
+
+<h2>🎯Top Attractions in <%= trip.destination %></h2>
+
+<div class="scroll-container">
+  <% if (attractions.length === 0) { %>
+    <p>No attractions found</p>
+  <% } else { %>
+    <% attractions.forEach(place => { %>
+  <div 
+  class="card place-card"
+onclick="focusPlace(<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>, '<%= place.properties.name %>')">
+    
+
+    <h3 class="card-title">
+      <%= place.properties.name_international?.en || place.properties.name %>
+    </h3>
+    
+
+
+    <% if (place.properties.historic?.type) { %>
+      <span class="badge">
+        <%= place.properties.historic.type %>
+      </span>
+    <% } %>
+
+    <% if (place.properties.formatted) { %>
+      <p class="address">
+        <%= place.properties.formatted %>
+      </p>
+    <% } %>
+
+    <% if (place.properties.opening_hours) { %>
+      <p class="hours">
+        🕒 <%= place.properties.opening_hours %>
+      </p>
+    <% } %>
+
+    <% if (place.properties.website) { %>
+      <a href="<%= place.properties.website %>" target="_blank" class="website-link">
+        Visit Website
+      </a>
+    <% } %>
+
+  </div>
+<% }) %>
+  <% } %>
+</div>
+<hr>
+
+<h2>🏨Recommended Hotels in <%= trip.destination %></h2>
+
+<div class="scroll-container">
+  <% if (hotels.length === 0) { %>
+    <p>No hotels found</p>
+  <% } else { %>
+
+    <% hotels.forEach(place => { %>
+  <div 
+    class="card place-card"
+    onclick="focusPlace(
+      <%= place.geometry.coordinates[1] %>, 
+      <%= place.geometry.coordinates[0] %>, 
+      '<%= place.properties.name %>'
+    )"
+  >
+    <h3 class="card-title">
+      <%= place.properties.name || "Unnamed Hotel" %>
+    </h3>
+
+    <% if (place.properties.formatted) { %>
+      <p class="address">
+        <%= place.properties.formatted %>
+      </p>
+    <% } %>
+
+    <% if (place.properties.opening_hours) { %>
+  <p class="hours">
+    🕒 <%= place.properties.opening_hours %>
+  </p>
+<% } else { %>
+  <p class="hours">
+    🕒 Open 24 hours (Most hotels)
+  </p>
+<% } %>
+
+<% if (place.properties.website) { %>
+  <a href="<%= place.properties.website %>" 
+     target="_blank" 
+     class="website-link">
+     Visit Website
+  </a>
+<% } %>
+
+    
+
+  </div>
+<% }) %>
+
+  <% } %>
+
+</div>
+<hr>
+
+<h2>🍽️Popular Restaurants in <%= trip.destination %></h2>
+
+<div class="scroll-container">
+
+  <% if (restaurants.length === 0) { %>
+    <p>No restaurants found</p>
+  <% } else { %>
+
+    <% restaurants.forEach(place => { %>
+      <div 
+        class="card place-card"
+        onclick="focusPlace(
+          <%= place.geometry.coordinates[1] %>, 
+          <%= place.geometry.coordinates[0] %>, 
+          '<%= place.properties.name %>'
+        )"
+      >
+        <h3 class="card-title">
+          <%= place.properties.name || "Unnamed Restaurant" %>
+        </h3>
+
+        <% if (place.properties.formatted) { %>
+          <p class="address">
+            <%= place.properties.formatted %>
+          </p>
+        <% } %>
+
+        <% if (place.properties.opening_hours) { %>
+          <p class="hours">
+            🕒 <%= place.properties.opening_hours %>
+          </p>
+        <% } else { %>
+          <p class="hours">
+            🕒 Timings not available
+          </p>
+        <% } %>
+
+        <% if (place.properties.website) { %>
+          <a href="<%= place.properties.website %>" 
+             target="_blank" 
+             class="website-link">
+             Visit Website
+          </a>
+        <% } %>
+
+      </div>
+    <% }) %>
+
+  <% } %>
+
+</div>
+
+<hr>
+
+<h2>🏥 Nearby Hospitals in <%= trip.destination %></h2>
+
+<div class="scroll-container">
+
+  <% if (hospitals.length === 0) { %>
+    <p>No hospitals found nearby</p>
+  <% } else { %>
+
+    <% hospitals.forEach(place => { %>
+      <div 
+        class="card place-card"
+        onclick="focusPlace(<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>, '<%= place.properties.name %>')"
+      >
+        <h3 class="card-title">
+          <%= place.properties.name || "Unnamed Hospital" %>
+        </h3>
+        <% if (place.properties.opening_hours) { %>
+  <p class="hours">
+    🕒 <%= place.properties.opening_hours %>
+  </p>
+<% } else { %>
+  <p class="hours">
+    🕒 Open 24/7 (Usually)
+  </p>
+<% } %>
+
+        <% if (place.properties.formatted) { %>
+          <p class="address">
+            <%= place.properties.formatted %>
+          </p>
+        <% } %>
+
+      </div>
+    <% }) %>
+
+  <% } %>
+
+</div>
+
+<br>
+<a href="/trips" style=
+  "color: rgb(43, 211, 226);">← Back to Trips</a>
+
+
+<script>
+  const lat = <%= trip.location.lat %>; 
+  const lon = <%= trip.location.lon %>;
+
+  const map = L.map('map').setView([lat, lon], 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Destination Marker
+  L.marker([lat, lon])
+    .addTo(map)
+    .bindPopup("<b><%= trip.destination %></b>")
+    .openPopup();
+
+  // Attractions
+  <% attractions.forEach(place => { %>
+    <% if (place.geometry) { %>
+      L.marker([<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>])
+        .addTo(map)
+        .bindPopup("<%= place.properties.name %>");
+    <% } %>
+  <% }) %>
+
+  // Hotels
+  <% hotels.forEach(place => { %>
+    <% if (place.geometry) { %>
+      L.marker([<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>])
+        .addTo(map)
+        .bindPopup("<%= place.properties.name %>");
+    <% } %>
+  <% }) %>
+
+  // Restaurants
+  <% restaurants.forEach(place => { %>
+    <% if (place.geometry) { %>
+      L.marker([<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>])
+        .addTo(map)
+        .bindPopup("<%= place.properties.name %>");
+    <% } %>
+  <% }) %>
+
+    // Hospitals
+  <% hospitals.forEach(place => { %>
+    <% if (place.geometry) { %>
+      L.marker([<%= place.geometry.coordinates[1] %>, <%= place.geometry.coordinates[0] %>])
+        .addTo(map)
+        .bindPopup("<%= place.properties.name %>");
+    <% } %>
+  <% }) %>
+
+  //  Focus function 
+  function focusPlace(lat, lon, name) {
+  // Scroll to map smoothly
+  document.getElementById("map").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  map.setView([lat, lon], 16);
+
+  L.popup()
+    .setLatLng([lat, lon])
+    .setContent("<b>" + name + "</b>")
+    .openOn(map);
+}
+
+</script>

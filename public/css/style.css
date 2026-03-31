@@ -1,0 +1,469 @@
+/* GLOBAL BASE */
+body.dashboard-page {
+  background-color: rgb(234, 238, 255)
+  
+}
+
+/* NAVBAR */
+.navbar {
+  background: linear-gradient(90deg, #4f46e5, #2563eb);
+  color: white;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white !important;
+}
+
+.navbar .nav-link {
+  color: rgba(255,255,255,0.85) !important;
+  font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+  color: white !important;
+}
+
+/*CARDS (Trips, Summary)*/
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* HEADINGS & TEXT */
+h2, h3, h5 {
+  color: #333333;
+}
+
+.text-muted {
+  color: #6B7280 !important; /* Slate Gray */
+}
+
+
+/* Primary — Add Trip, Apply Filters */
+.btn-primary {
+  background-color: #4f46e5;
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3730a3;
+}
+
+/* Checklist Button */
+.btn-info {
+  background-color: #00BFFF; /* Sky Blue */
+  border: none;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #009acd;
+}
+
+/* Edit Button */
+.btn-warning {
+  background-color: #ffdf95;
+  border: none;
+  color: #333333;
+}
+
+/* Delete Button */
+.btn-danger {
+  background-color: #fa417c;
+  border: none;
+}
+
+/* Disabled Button */
+.btn-secondary {
+  background-color: #6B7280;
+  border: none;
+}
+
+/* CHECKLIST STYLES */
+.list-group-item {
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.list-group-item:hover {
+  background-color: #E0F7FA; /* Aqua hover */
+}
+
+/* Completed checklist item */
+.text-decoration-line-through {
+  opacity: 0.7;
+}
+
+/* BUDGET STATUS */
+.text-success {
+  color: #00BFFF !important; /* Sky Blue */
+}
+
+.text-danger {
+  color: #E63946 !important;
+}
+
+/*MODAL */
+.modal-content {
+  border-radius: 16px;
+  border: none;
+}
+
+/* FOOTER*/
+footer {
+  color: #6B7280;
+}
+
+/* Horizontal scroll containers */
+.scroll-container {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth; /* optional for smooth scrolling */
+
+  /* Hide scrollbar */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* Optional: hover effect for cards */
+.scroll-container > div {
+  transition: transform 0.2s;
+}
+
+.scroll-container > div:hover {
+  transform: translateY(-5px);
+}
+
+
+.scroll-container > div:hover {
+  transform: translateY(-5px); /* subtle lift on hover */
+}
+
+.place-card {
+  min-width: 260px;
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.place-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.place-card .card-title {
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.place-card .badge {
+  display: inline-block;
+  background: #e6f7ff;
+  color: #0077b6;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.place-card .address {
+  font-size: 13px;
+  color: #666;
+  margin: 6px 0;
+}
+
+.place-card .hours {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 6px 0;
+}
+
+.scroll-container .place-card {
+  min-width: 280px;
+  max-width: 280px;
+}
+
+.place-card {
+  padding: 18px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.place-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.place-card .description {
+  font-size: 14px;
+  color: #444;
+  margin: 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.category-pill {
+  display: inline-block;
+  background: #e6f2ff;
+  color: #0077cc;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.address {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.hours {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #444;
+}
+
+.website-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.website-link:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+.profile-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  color: #5a67d8;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.profile-circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+.dropdown-menu {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+
+/* Summary Cards Polish */
+.summary-card {
+  border-radius: 20px;
+  background: white;
+  border: 1px solid #eef2ff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  padding: 28px 20px;
+  transition: all 0.25s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.1);
+}
+
+.summary-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #4f46e5;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.summary-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summary-card h3 {
+  font-size: 30px;
+}
+
+/* Welcome Section Polish */
+.dashboard-page h2 {
+  color: #2d3748;
+  letter-spacing: 0.5px;
+}
+
+.dashboard-page p {
+  font-size: 15px;
+}
+
+/* Filter Card Polish */
+.filter-card {
+  border-radius: 16px;
+}
+
+.filter-card .form-control {
+  border-radius: 10px;
+}
+
+.filter-card button {
+  border-radius: 10px;
+  padding: 8px 18px;
+}
+
+/* HERO SECTION */
+.dashboard-hero {
+  background: linear-gradient(135deg, #0d6efd, #4dabf7);
+  color: white;
+  padding: 50px 30px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.dashboard-hero h1 {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.dashboard-hero p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+/* Trip card title styling */
+.destination-link {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1e293b;
+}
+
+.destination-link:hover {
+  color: #4f46e5;
+}
+
+/* Trip Top Image Strip */
+.trip-image {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.section-spacing {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.dashboard-container {
+  max-width: 1000px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#tripContainer .col-md-4 {
+  display: flex;
+}
+
+.trip-card {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 0;
+}
+  
+.trip-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.12);
+}
+
+.trip-card p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.trip-card .btn {
+  margin-right: 6px;
+  margin-top: 6px;
+}
+
+#tripContainer .col-md-4 {
+  display: flex;
+
+}
+
+.trip-card {
+  width: 100%;
+}
+
+#tripContainer {
+  max-width: 1100px;
+  margin: auto;
+}
+.form-control::placeholder {
+  font-size: 13px;     /* smaller size */
+  color: #999;         /* lighter color */
+  opacity: 0.7;        /* softer look */
+}
+body.register-page {
+  background: #d2def7;  
+}
+body.login-page {
+  background: #e0eaff;  
+}
+body.addtrip-page {
+  background: #f0f5ff;  
+}

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= trip ? "Edit Trip" : "Add Trip" %> - Travel Planner</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body class="addtrip-page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/trips">Travel Planner</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/trips">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FORM CONTAINER -->
+    <div class="container d-flex justify-content-center mt-5">
+        <div class="card shadow p-4" style="width: 480px;">
+
+            <h3 class="text-center mb-3"><%= trip ? "Edit Trip" : "Add New Trip" %></h3>
+
+            <form action="<%= trip ? '/trips/edit/' + trip._id : '/trips/add' %>" method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Destination</label>
+                    <input type="text" 
+                        name="destination" 
+                        required 
+                        class="form-control"
+                        oninput="formatText(this)"
+                        value="<%= trip ? trip.destination : '' %>">
+
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date"
+                            name="startDate"
+                            id="startDate"
+                            required
+                            class="form-control"
+                            min="<%= !trip ? new Date().toISOString().split('T')[0] : '' %>"
+                            value="<%= trip ? (trip.startDate instanceof Date ? trip.startDate.toISOString().split('T')[0] : trip.startDate) : '' %>">                
+                </div>
+                
+
+                <div class="mb-3">
+                    <label class="form-label">End Date</label>
+                    <input type="date"
+                      name="endDate"
+                      id="endDate"
+                      required
+                      class="form-control"
+                      value="<%= trip ? (trip.endDate instanceof Date ? trip.endDate.toISOString().split('T')[0] : trip.endDate) : '' %>">
+
+                      <% if (typeof error !=="undefined") { %>
+                        <div class="alert alert-danger mt-2">
+                          <%= error %>
+                        </div>
+                     <% } %>
+                </div>
+
+            
+
+                <div class="mb-3">
+  <button type="button" class="btn btn-outline-primary"
+          onclick="toggleItinerary()">
+    <i class="fa-solid fa-plus me-2"></i> Add Itinerary 
+  </button>
+</div>
+
+<div id="itinerarySection"
+     class="<%= trip && trip.itinerary && trip.itinerary.length > 0 ? '' : 'd-none' %>">
+  
+  <h5 class="mt-3">Day-wise Itinerary</h5>
+
+  <div id="itineraryContainer">
+
+    <% if (trip && trip.itinerary && trip.itinerary.length > 0) { %>
+
+      <% trip.itinerary.forEach(function(day) { %>
+        <div class="mb-3">
+          <label class="form-label">
+            Day <%= day.day %> – <%= day.date %>
+          </label>
+
+          <textarea class="form-control"
+                    name="itinerary[]"
+                    rows="2"><%= day.plan %></textarea>
+
+          <input type="hidden"
+                 name="itineraryDates[]"
+                 value="<%= day.date %>">
+        </div>
+      <% }) %>
+
+    <% } %>
+
+  </div>
+</div>
+
+
+                <div class="mb-3">
+                    <label class="form-label">Budget</label>
+                    <input type="text" name="budget" id="budgetInput" class="form-control" value="<%= trip ? trip.budget : '' %>">                           
+                </div>
+                <hr>
+<h5 class="text-center">Expense Breakdown</h5>
+
+<div class="mb-2">
+    <label class="form-label">Travel</label>
+    <input type="number" name="travel" class="form-control"
+           value="<%= trip && trip.expenses ? trip.expenses.travel : '' %>">
+</div>
+
+<div class="mb-2">
+    <label class="form-label">Stay</label>
+    <input type="number" name="stay" class="form-control"
+           value="<%= trip && trip.expenses ? trip.expenses.stay : '' %>">
+</div>
+
+<div class="mb-2">
+    <label class="form-label">Food</label>
+    <input type="number" name="food" class="form-control"
+           value="<%= trip && trip.expenses ? trip.expenses.food : '' %>">
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Activities</label>
+    <input type="number" name="activities" class="form-control"
+           value="<%= trip && trip.expenses ? trip.expenses.activities : '' %>">
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Travel Type</label>
+    <select name="travelType" class="form-control" required>
+        <option value="">Select Travel Type</option>
+        <option value="Solo" <%= trip && trip.travelType === "Solo" ? "selected" : "" %>>Solo</option>
+        <option value="Family" <%= trip && trip.travelType === "Family" ? "selected" : "" %>>Family</option>
+        <option value="Friends" <%= trip && trip.travelType === "Friends" ? "selected" : "" %>>Friends</option>
+        <option value="Work" <%= trip && trip.travelType === "Work" ? "selected" : "" %>>Work</option>
+        <option value="Pilgrimage" <%= trip && trip.travelType === "Pilgrimage" ? "selected" : "" %>>Pilgrimage</option>
+    </select>
+</div>
+
+
+                <div class="mb-3">
+  <label class="form-label">Checklist</label>
+
+  <div id="checklistContainer">
+
+  <% if (trip && trip.checklist && trip.checklist.length > 0) { %>
+
+    <% trip.checklist.forEach(function(c) { %>
+      <div class="form-check mb-1">
+        <input class="form-check-input"
+               type="checkbox"
+               name="selectedItems"
+               value="<%= c.item %>"
+               <%= c.completed ? "checked" : "" %>>
+
+        <label class="form-check-label">
+          <%= c.item %>
+        </label>
+      </div>
+    <% }) %>
+
+  <% } %>
+
+</div>
+
+
+  <button type="button" class="btn btn-sm btn-secondary mt-2"
+          onclick="addChecklistItem()">+ Add Item</button>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Pre‑Made List</label>
+
+  <!-- Packing List Categories -->
+ <div class="mb-3">
+  <label class="form-label">Packing Categories</label>
+
+  <div class="row">
+    <% const packingCategories = [
+      "Essentials","Accessories","Beach","Biking","Camping",
+      "Clothing","Electronics","Food","Gym",
+      "Healthcare","Hiking","Makeup","Photography",
+      "Swimming","Toiletries","Work"
+    ]; %>
+
+    <% packingCategories.forEach(cat => { %>
+      <div class="col-6">
+        <div class="form-check">
+          <input class="form-check-input packing-category"
+       type="checkbox"
+       name="packingCategory"
+       value="<%= cat %>"
+       id="pack_<%= cat %>"
+       <%= trip && trip.packingCategory && trip.packingCategory.includes(cat) ? "checked" : "" %>>
+          <label class="form-check-label"
+                 for="pack_<%= cat %>">
+            <%= cat %>
+          </label>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+
+  <!-- Pre‑Trip Tasks -->   
+<div class="mb-2">
+  <label class="form-label">Pre-Trip Tasks</label>
+
+  <div class="form-check">
+    <input class="form-check-input task-category"
+       type="checkbox"
+       name="taskCategory"
+       value="Trip Ready"
+       id="tripReady"
+       <%= trip && trip.taskCategory && trip.taskCategory.includes("Trip Ready") ? "checked" : "" %>>
+    <label class="form-check-label" for="tripReady">
+      Trip Ready / Preparation
+    </label>
+  </div>
+
+  <div class="form-check">
+    <input class="form-check-input task-category"
+       type="checkbox"
+       name="taskCategory"
+       value="Before Leaving Home"
+       id="beforeLeaving"
+       <%= trip && trip.taskCategory && trip.taskCategory.includes("Before Leaving Home") ? "checked" : "" %>>
+    <label class="form-check-label" for="beforeLeaving">
+      Before Leaving Home
+    </label>
+  </div>
+</div>
+
+
+<div id="checklistPreview" class="mt-3"></div>
+
+<small style="color:gray; display:block; margin-top:5px;">
+  💡 Tip: Select items if needed. If nothing is selected, all items in the selected category will be added automatically.
+</small>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <%= trip ? "Update Trip" : "Add Trip" %>
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+<div id="tripData"
+     data-checklist='<%- JSON.stringify(trip && trip.checklist ? trip.checklist.map(c => c.item) : []) %>'
+     data-packing='<%- JSON.stringify(trip && trip.packingCategory ? trip.packingCategory : []) %>'
+     data-task='<%- JSON.stringify(trip && trip.taskCategory ? trip.taskCategory : []) %>'>
+</div>
+    <script>
+  function addChecklistItem() {
+    const div = document.createElement("input");
+    div.type = "text";
+    div.name = "checklist[]";
+    div.className = "form-control mb-2";
+    div.placeholder = "Checklist item";
+
+    document.getElementById("checklistContainer").appendChild(div);
+  }
+</script>
+
+<script>
+  const PACKING_TEMPLATES = {
+    Essentials: ["Backpack","Blanket", "Books" ,"Towels" , "Cash", "Wallet", "Credit adnd Debit cards", "Driver's License", "ID", "Keys", "Tickets", "Passport", "Pen", "Pillow", "Notebook", "Waterbottle"],
+  Accessories: ["Sunglasses", "Hat", "Watch", "Scarf", "Bag", "Batteries", "Beach bag", "Bracelets", "Earrings", "Glasses", "Hairties", "Headbands", "jewellery", "Necklaces", "Rings" ],
+  Beach: ["Bathing suit", "Beachbag", "Beach towel", "Flipflops", "Goggles", "Hat", "Sunscreen", "Towel"],
+  Riding: ["Keys", "Riding Shoes", "Riding Wears", "Gloves", "Helmet", "Scarf"],
+  Camping: ["Airbed", "Blanket", "Boots", "Chairs", "Firewood", "Fuel", "Hammer", "Headlamp", "Ice", "Kettle", "Knife", "Match box", "Pillow", "Rope", "Stove", "Table", "Tent", "Toiletries", "Torch", "Towel", "Water container" ],
+  Clothing: ["Bathing suit", "Belt", "Boots", "Coat", "Dress", "Flipflops", "Shoes", "Gloves", "Hat", "Heels", "Hoodie", "Jacket", "Jeans", "Jumper suits", "Leggings", "Pajamas", "Rain Jacket", "Sandals", "Scarf", "Shirt", "Skirts", "Slippers", "Sneakers", "Socks", "Sweatshirt", "T-shirts"],
+  Electronics: ["Camera", "Camera charger", "Headphones", "Power bank", "Smart phone", "Smart phone charger", "Speaker", "Tab", "Travel adaptor", "Watch", "Watch charger"],
+  Food: ["Bread", "Butter", "Cereal", "Cheese", "Chips", "Cookies", "Fruits", "Gum", "Honey", "Ice containers", "Ice", "Juice", "Ketchups", "Mayo", "Milk", "Nuts", "Peanut Butter", "Water", "Yoghurt"],
+  Gym: ["Gym Shoes", "Gym wears", "Gym socks", "Gym Towel", "Headphones", "Music Player", "Water bottle"],
+  Healthcare: ["Allergy medicine", "Antibiotics", "Eye drops", "First Aid Kit", "Headache pills", "Inhalers", "Nasal spray", "Prescribed medicines"],
+  Hiking: ["Bug Repellent", "Compass", "First Aid Kit", "GPS", "Hiking Shoes", "Hiking Socks", "Hiking T-shirts", "Sunglasses", "Sunscreen", "Water bottle"],
+  Makeup: ["Blush", "Blush brush", "Brow pencil", "Brushes", "Concealer", "Eyebrow gel", "Eyebrow pencil", "Eyelash", "Eyeliner", "Foundation", "Highlighter", "Lip gloss", "Lip liner", "Lipstick", "Mascara", "Moisturizer", "Perfume", "powder", "Primer", "Setting spray", "sponge"],
+  Photography: ["Camera", "camera bag", "camera charger", "Tripod", "Memory Card"],
+  Swimming: ["earplugs", "Goggles" , "Swimsuit", "Goggles", "Towel"],
+  Toiletries: ["Body wash", "body lotion", "brush", "comb", "Conditioner", "Deodrant", "Facewash", "Glasses", "Hairbrush", "Hair ties", "Hair spray", "Moisturizer", "Perfume", "Shampoo", "Shower gel", "Soap", "Sunscreen", "Toothbrush", "Toothpaste", "Towel"],
+  Work: ["Laptop", "Laptop charger", "Smartphone", "Smart phone charger", ]
+  };
+
+  const TASK_TEMPLATES = {
+    "Trip Ready": [
+      "Create packing list",
+      "Confirm accommodation bookings",
+      "Check weather & adjust packing",
+      "Pack bags",
+      "Plan budget & daily expenses",
+      "Organize travel documents",
+      "Clean house",
+      "Arrange pet/house care",
+      "Charge electronics / buy adapters"
+    ],
+    "Before Leaving Home": [
+      "Take out trash & leftovers",
+      "Unplug appliances",
+      "Turn off gas and water",
+      "Pack travel snacks",
+      "Double‑check personal item bag",
+      "Carry final documents & tickets",
+      "Check vehicle (fuel, tires, etc.) if driving"
+    ]
+  };
+
+
+const tripDataDiv = document.getElementById("tripData");
+
+const selectedCategories = {
+  packing: tripDataDiv ? JSON.parse(tripDataDiv.dataset.packing) : [],
+  task: tripDataDiv ? JSON.parse(tripDataDiv.dataset.task) : []
+};
+
+const savedItems = tripDataDiv
+  ? JSON.parse(tripDataDiv.dataset.checklist)
+  : [];
+
+renderChecklist();
+
+
+  function renderChecklist() {
+  const container = document.getElementById("checklistPreview");
+  container.innerHTML = "";
+
+  // ---------- PACKING LIST ----------
+  if (selectedCategories.packing.length > 0) {
+    const packingTitle = document.createElement("h6");
+    packingTitle.innerText = "Packing List";
+    container.appendChild(packingTitle);
+
+    const uniquePackingItems = new Set();
+
+selectedCategories.packing.forEach(cat => {
+  (PACKING_TEMPLATES[cat] || []).forEach(item => {
+    uniquePackingItems.add(item);
+  });
+});
+
+const ul = document.createElement("ul");
+ul.className = "list-group mb-2";
+
+uniquePackingItems.forEach(item => {
+  const li = document.createElement("li");
+  li.className = "list-group-item";
+
+const isChecked = savedItems.includes(item);
+
+  li.innerHTML = `
+    <input type="checkbox" name="selectedItems" value="${item}" ${isChecked ? "checked" : ""}>
+    ${item}
+  `;
+  ul.appendChild(li);
+});
+
+container.appendChild(ul);
+  }
+
+  // PRE-MADE TASKS
+  if (selectedCategories.task.length > 0) {
+    const taskTitle = document.createElement("h6");
+    taskTitle.innerText = "Pre-Made Tasks";
+    container.appendChild(taskTitle);
+
+    selectedCategories.task.forEach(cat => {
+      const catTitle = document.createElement("strong");
+      catTitle.innerText = cat;
+      container.appendChild(catTitle);
+
+      const ul = document.createElement("ul");
+      ul.className = "list-group mb-2";
+
+      (TASK_TEMPLATES[cat] || []).forEach(item => {
+
+        const isChecked = savedItems.includes(item);
+  const li = document.createElement("li");
+  li.className = "list-group-item";
+  li.innerHTML = `
+    <input type="checkbox" name="selectedItems" value="${item}" ${isChecked ? "checked" : ""}>
+    ${item}
+  `;
+  ul.appendChild(li);
+});
+
+      container.appendChild(ul);
+    });
+  }
+}
+
+
+
+// Packing dropdown 
+document.querySelectorAll(".packing-category")
+  .forEach(checkbox => {
+    checkbox.addEventListener("change", function () {
+
+      if (this.checked) {
+        selectedCategories.packing.push(this.value);
+      } else {
+        selectedCategories.packing =
+          selectedCategories.packing.filter(cat => cat !== this.value);
+      }
+
+      renderChecklist();
+    });
+  });
+
+
+// Task category checkboxes
+document.querySelectorAll(".task-category")
+  .forEach(checkbox => {
+    checkbox.addEventListener("change", function () {
+
+      if (this.checked) {
+        selectedCategories.task.push(this.value);
+      } else {
+        selectedCategories.task =
+          selectedCategories.task.filter(cat => cat !== this.value);
+      }
+
+      renderChecklist();
+    });
+  });
+
+
+  
+
+  
+</script>
+
+<script>
+function formatText(input) {
+  let value = input.value.toLowerCase();
+  input.value = value.charAt(0).toUpperCase() + value.slice(1);
+}
+</script>
+
+<script>
+function toggleItinerary() {
+  const section = document.getElementById("itinerarySection");
+  const container = document.getElementById("itineraryContainer");
+
+  const startInput = document.querySelector('input[name="startDate"]').value;
+  const endInput = document.querySelector('input[name="endDate"]').value;
+
+  if (!startInput || !endInput) {
+    alert("Please select start and end dates first");
+    return;
+  }
+
+  const startDate = new Date(startInput);
+  const endDate = new Date(endInput);
+
+  if (startDate > endDate) {
+    alert("End date must be after start date");
+    return;
+  }
+
+  // Use classList instead of style.display
+  if (section.classList.contains("d-none")) {
+    section.classList.remove("d-none");
+  } else {
+    section.classList.add("d-none");
+    return;
+  }
+
+  container.innerHTML = "";
+
+  const oneDay = 24 * 60 * 60 * 1000;
+  const days = Math.round((endDate - startDate) / oneDay) + 1;
+
+  for (let i = 0; i < days; i++) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(startDate.getDate() + i);
+
+    container.innerHTML += `
+      <div class="mb-3">
+        <label class="form-label">
+          Day ${i + 1} – ${currentDate.toDateString()}
+        </label>
+
+        <textarea class="form-control"
+                  name="itinerary[]"
+                  rows="2"
+                  placeholder="Plan for Day ${i + 1}"></textarea>
+
+        <input type="hidden"
+               name="itineraryDates[]"
+               value="${currentDate.toISOString().split('T')[0]}">
+      </div>
+    `;
+  }
+}
+
+
+
+
+</script>
+
+<script>
+const startInput = document.getElementById("startDate");
+const endInput = document.getElementById("endDate");
+
+if (startInput && endInput) {
+
+  // When start date changes
+  startInput.addEventListener("change", function () {
+    endInput.min = startInput.value;
+  });
+
+  // If editing existing trip
+  if (startInput.value) {
+    endInput.min = startInput.value;
+  }
+}
+</script>
+
+
+<script>
+const budgetInput = document.getElementById("budgetInput");
+
+budgetInput.addEventListener("input", function (e) {
+  let value = e.target.value;
+
+  // allow only numbers
+  value = value.replace(/\D/g, "");
+
+  // add commas
+  if (value) {
+    e.target.value = Number(value).toLocaleString("en-IN");
+  } else {
+    e.target.value = "";
+  }
+});
+</script>
+
+<script>
+const form = document.querySelector("form");
+let submitting = false;
+
+form.addEventListener("submit", function(e) {
+  if (submitting) {
+    e.preventDefault();
+    return;
+  }
+  submitting = true;
+
+  const btn = form.querySelector("button[type='submit']");
+  btn.disabled = true;
+  btn.innerText = "Processing...";
+});
+</script>
+
+</body>
+</html>
